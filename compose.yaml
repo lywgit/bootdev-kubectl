@@ -1,0 +1,39 @@
+services:
+  crawler:
+    image: bootdotdev/synergychat-crawler
+    environment:
+      - CRAWLER_PORT=8080
+      - CRAWLER_KEYWORDS=love,hate,joy,sadness,anger,disgust,fear,surprise
+      - CRAWLER_DB_PATH=/var/lib/synergychat/crawler/db
+    volumes:
+      - ./crawler-db:/var/lib/synergychat/crawler/db
+    networks:
+      - synergychat
+
+  api:
+    image: bootdotdev/synergychat-api
+    ports:
+      - "8081:8080"
+    environment:
+      - API_PORT=8080
+      - CRAWLER_BASE_URL=http://crawler:8080
+    networks:
+      - synergychat
+    depends_on:
+      - crawler
+
+  web:
+    image: bootdotdev/synergychat-web
+    ports:
+      - "8080:8080"
+    environment:
+      - WEB_PORT=8080
+      - API_URL=http://localhost:8081
+    networks:
+      - synergychat
+    depends_on:
+      - api
+
+networks:
+  synergychat:
+    driver: bridge
