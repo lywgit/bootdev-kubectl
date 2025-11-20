@@ -14,4 +14,4 @@ spec:
             value: /
       backendRefs:
         - name: web-service
-          port: 8080
+          port: 80
